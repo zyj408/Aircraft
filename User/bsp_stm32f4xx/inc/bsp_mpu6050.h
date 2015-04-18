@@ -64,6 +64,7 @@ uint8_t MPU6050_ReadByte(uint8_t _ucRegAddr);
 void MPU6050_DataDeal(void);
 void MPU6050_ReadData(void);
 extern uint8_t MPU6050Flag;
+extern uint8_t MPU6050FlagOld;
 #endif
 
 /***************************** 安富莱电子 www.armfly.com (END OF FILE) *********************************/

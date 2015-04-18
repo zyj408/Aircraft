@@ -461,11 +461,6 @@
               <FilePath>..\..\User\bsp_stm32f4xx\src\bsp_dwt.c</FilePath>
             </File>
             <File>
-              <FileName>bsp_printf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\bsp_stm32f4xx\src\bsp_printf.c</FilePath>
-            </File>
-            <File>
               <FileName>bsp_camera.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\bsp_stm32f4xx\src\bsp_camera.c</FilePath>
@@ -491,11 +486,6 @@
               <FilePath>..\..\User\bsp_stm32f4xx\src\bsp_hmc5883l.c</FilePath>
             </File>
             <File>
-              <FileName>bsp_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\bsp_stm32f4xx\src\bsp_uart.c</FilePath>
-            </File>
-            <File>
               <FileName>bsp_led.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\bsp_stm32f4xx\src\bsp_led.c</FilePath>
@@ -514,6 +504,16 @@
               <FileName>esp8266.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\esp8266.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_uart_fifo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp_stm32f4xx\src\bsp_uart_fifo.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp_stm32f4xx\src\bsp_timer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -864,6 +864,11 @@
               <FileName>IMU.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\IMU.c</FilePath>
+            </File>
+            <File>
+              <FileName>Kalman.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\Kalman.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1349,11 +1354,6 @@
               <FilePath>..\..\User\bsp_stm32f4xx\src\bsp_dwt.c</FilePath>
             </File>
             <File>
-              <FileName>bsp_printf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\bsp_stm32f4xx\src\bsp_printf.c</FilePath>
-            </File>
-            <File>
               <FileName>bsp_camera.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\bsp_stm32f4xx\src\bsp_camera.c</FilePath>
@@ -1379,11 +1379,6 @@
               <FilePath>..\..\User\bsp_stm32f4xx\src\bsp_hmc5883l.c</FilePath>
             </File>
             <File>
-              <FileName>bsp_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\User\bsp_stm32f4xx\src\bsp_uart.c</FilePath>
-            </File>
-            <File>
               <FileName>bsp_led.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\bsp_stm32f4xx\src\bsp_led.c</FilePath>
@@ -1402,6 +1397,16 @@
               <FileName>esp8266.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\esp8266.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_uart_fifo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp_stm32f4xx\src\bsp_uart_fifo.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp_stm32f4xx\src\bsp_timer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1752,6 +1757,11 @@
               <FileName>IMU.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\IMU.c</FilePath>
+            </File>
+            <File>
+              <FileName>Kalman.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\Kalman.c</FilePath>
             </File>
           </Files>
         </Group>

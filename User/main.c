@@ -1,6 +1,8 @@
 #include  <includes.h>
 
 
+uint16_t LedDalay = 1000;
+
 /*
 *********************************************************************************************************
 *                                       LOCAL GLOBAL VARIABLES
@@ -65,6 +67,12 @@ int main(void)
     return (0);
 }
 
+BSP_OS_SEM wifi_send_sem;
+void AppSemCreate(void)
+{
+	BSP_OS_SemCreate (&wifi_send_sem, 1, NULL);
+	
+}
 /*
 *********************************************************************************************************
 *	函 数 名: AppTaskStart
@@ -74,6 +82,8 @@ int main(void)
 	优 先 级：2
 *********************************************************************************************************
 */
+
+extern enum WIFI_STATUS WifiStatus;
 static  void  AppTaskStart (void *p_arg)
 {
 	 OS_ERR err;
@@ -91,13 +101,14 @@ static  void  AppTaskStart (void *p_arg)
     CPU_IntDisMeasMaxCurReset();
 #endif
                                         
-    AppTaskCreate();                                           
+    AppTaskCreate();       
+		AppSemCreate();         	
   while (1)
-	{   
-   
-		bsp_LedToggle(1);
-		
-		BSP_OS_TimeDlyMs(500);     
+	{ 
+		if(WifiStatus == CONNECTING)
+			bsp_LedToggle(1);
+		BSP_OS_TimeDlyMs(500);
+
   }
 }
 

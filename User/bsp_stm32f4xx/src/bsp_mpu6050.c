@@ -7,6 +7,7 @@ MPU6050_T g_tMPU6050;		/* 定义一个全局变量，保存实时数据 */
 MPU6050_T g_tMPU6050_Stk[5];
 struct mpu6050_info MPU6050_H;
 uint8_t MPU6050Flag = 0;  //MPU6050校准标志位
+uint8_t MPU6050FlagOld = 0;  //MPU6050校准标志位
 /*
 *********************************************************************************************************
 *	函 数 名: bsp_InitMPU6050
@@ -154,14 +155,14 @@ void MPU6050_DataDeal(void)
 	g_tMPU6050_Stk[2] = g_tMPU6050_Stk[3];
 	g_tMPU6050_Stk[3] = g_tMPU6050_Stk[4];
 	
-	g_tMPU6050.Accel_X = (g_tMPU6050.Accel_X + g_tMPU6050_Stk[4].Accel_X) / 2;
-	g_tMPU6050.Accel_Y = (g_tMPU6050.Accel_Y + g_tMPU6050_Stk[4].Accel_Y) / 2;
-	g_tMPU6050.Accel_Z = (g_tMPU6050.Accel_Z + g_tMPU6050_Stk[4].Accel_Z) / 2;
-	g_tMPU6050.GYRO_X = (g_tMPU6050.GYRO_X + g_tMPU6050_Stk[4].GYRO_X) / 2;
-	g_tMPU6050.GYRO_Y = (g_tMPU6050.GYRO_Y + g_tMPU6050_Stk[4].GYRO_Y) / 2;
-	g_tMPU6050.GYRO_Z = (g_tMPU6050.GYRO_Z + g_tMPU6050_Stk[4].GYRO_Z) / 2;
+	g_tMPU6050_Stk[4].Accel_X = (g_tMPU6050.Accel_X + g_tMPU6050_Stk[4].Accel_X) / 2;
+	g_tMPU6050_Stk[4].Accel_Y = (g_tMPU6050.Accel_Y + g_tMPU6050_Stk[4].Accel_Y) / 2;
+	g_tMPU6050_Stk[4].Accel_Z = (g_tMPU6050.Accel_Z + g_tMPU6050_Stk[4].Accel_Z) / 2;
+	g_tMPU6050_Stk[4].GYRO_X = (g_tMPU6050.GYRO_X + g_tMPU6050_Stk[4].GYRO_X) / 2;
+	g_tMPU6050_Stk[4].GYRO_Y = (g_tMPU6050.GYRO_Y + g_tMPU6050_Stk[4].GYRO_Y) / 2;
+	g_tMPU6050_Stk[4].GYRO_Z = (g_tMPU6050.GYRO_Z + g_tMPU6050_Stk[4].GYRO_Z) / 2;
 	
-	g_tMPU6050_Stk[4] = g_tMPU6050;
+	//g_tMPU6050_Stk[4] = g_tMPU6050;
 
 	Accel_X_Temp = g_tMPU6050_Stk[0].Accel_X - MPU6050_H.Accel_X_Offset + 
 														g_tMPU6050_Stk[1].Accel_X - MPU6050_H.Accel_X_Offset + 

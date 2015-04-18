@@ -50,7 +50,7 @@ const  CPU_CHAR  *os_cpu_c__c = "$Id: $";
 */
 
 #include  <os.h>
-
+#include "bsp.h"
 /*
 *********************************************************************************************************
 *                                           IDLE TASK HOOK
@@ -366,7 +366,10 @@ void  OS_CPU_SysTickHandler (void)
 {
     CPU_SR_ALLOC();
 
-
+		SysTick_ISR();
+	
+	
+	
     CPU_CRITICAL_ENTER();
     OSIntNestingCtr++;                                      /* Tell uC/OS-III that we are starting an ISR             */
     CPU_CRITICAL_EXIT();

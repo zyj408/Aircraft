@@ -174,8 +174,6 @@ void bsp_DelayMS(uint32_t n)
 
 	while (1)
 	{
-		bsp_Idle();				/* CPU空闲执行的操作， 见 bsp.c 和 bsp.h 文件 */
-
 		/*
 			等待延迟时间到
 			注意：编译器认为 s_ucTimeOutFlag = 0，所以可能优化错误，因此 s_ucTimeOutFlag 变量必须申明为 volatile

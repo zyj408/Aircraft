@@ -37,6 +37,8 @@
 #include <stdio.h>
 #include <string.h>
 
+
+
 #ifndef TRUE
 	#define TRUE  1
 #endif
@@ -52,7 +54,7 @@
 #include "bsp_i2c_gpio.h"
 #include "bsp_mpu6050.h"
 #include "bsp_hmc5883l.h"
-#include "bsp_uart.h"
+#include "bsp_uart_fifo.h"
 #include "bsp_led.h"
 #include "bsp_pwm.h"
 #include "esp8266.h"

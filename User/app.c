@@ -2,8 +2,8 @@
 #include "flymain.h"
 #include "IMU.h"
 
-
-
+uint8_t WIFI_Period;
+uint16_t CaliTime = 0;
 
 void AppSampleTask(void *p_arg)
 {
@@ -13,12 +13,12 @@ void AppSampleTask(void *p_arg)
 /* 监测MPU6050信息 */
 	if(i2c_CheckDevice(MPU6050_SLAVE_ADDRESS) == 0)
 	{
-		printf("MPU-6050 Ok (0x%02X)\r\n", MPU6050_SLAVE_ADDRESS);
+		//printf("MPU-6050 Ok (0x%02X)\r\n", MPU6050_SLAVE_ADDRESS);
 		MPU6050Flag |= NORMAL;
 	}
 	else
 	{
-		printf("MPU-6050 Err (0x%02X)\r\n", MPU6050_SLAVE_ADDRESS);
+		//printf("MPU-6050 Err (0x%02X)\r\n", MPU6050_SLAVE_ADDRESS);
 		MPU6050Flag &= (~NORMAL);
 	}
 /* 初始化MPU6050 */	
@@ -28,40 +28,59 @@ void AppSampleTask(void *p_arg)
 /* 监测HMC5883L信息 */	
 	if (i2c_CheckDevice(HMC5883L_SLAVE_ADDRESS) == 0)
 	{
-		printf("HMC5883L Ok (0x%02X)\r\n", HMC5883L_SLAVE_ADDRESS);
+		//printf("HMC5883L Ok (0x%02X)\r\n", HMC5883L_SLAVE_ADDRESS);
 		HMC5883LFlag |= NORMAL;
 	}
 	else
 	{
-		printf("HMC5883L Err (0x%02X)\r\n",HMC5883L_SLAVE_ADDRESS);
+		//printf("HMC5883L Err (0x%02X)\r\n",HMC5883L_SLAVE_ADDRESS);
 		HMC5883LFlag &= (~NORMAL);
 	}
 /* 初始化HMC5883L */		
 	bsp_InitHMC5883L();
-	
-	IMU_init();
-	
-	OSTimeDlyHMSM((CPU_INT16U) 0u,
-                (CPU_INT16U) 0u,
-                (CPU_INT16U) 10u,
-                (CPU_INT32U) 0u,
-                (OS_OPT    ) OS_OPT_TIME_HMSM_STRICT,
-                (OS_ERR   *)&err);
+
 	
 	while(1)
 	{
 		/* 传感器采集数据 */
 		MPU6050_ReadData();
 		HMC5883L_ReadData();
-		
+		MPU6050_DataDeal();  //处理MPU6050获取的数据得到：MPU6050_H结构体
+		HMC5883L_DataDeal();	//处理HMC5883L获取的数得到：HMC5883L_H结构体
 		
 		if(HMC5883LFlag & CALI_MODE)
 		{
-			UsartSendData(0x25);	  //HMC5883校准
+			
 		}
 		if(MPU6050Flag & CALI_MODE)
 		{
-			UsartSendData(0x45);
+			if(!(MPU6050FlagOld & CALI_MODE))  //进入校验模式
+			{
+				CaliTime = 200;
+				
+				MPU6050_H.Accel_X_Offset = g_tMPU6050.Accel_X;
+				MPU6050_H.Accel_Y_Offset = g_tMPU6050.Accel_Y;
+				MPU6050_H.Accel_Z_Offset = g_tMPU6050.Accel_Z  - 65536 / 4;
+			
+				MPU6050_H.GYRO_X_Offset = g_tMPU6050.GYRO_X;
+				MPU6050_H.GYRO_Y_Offset = g_tMPU6050.GYRO_Y;
+				MPU6050_H.GYRO_Z_Offset = g_tMPU6050.GYRO_Z;
+				
+			}
+			if(CaliTime == 0)
+			{			
+				MPU6050Flag &= ~(CALI_MODE);
+			}
+			
+			MPU6050_H.Accel_X_Offset = (float)(g_tMPU6050.Accel_X + MPU6050_H.Accel_X_Offset) / 2;
+			MPU6050_H.Accel_Y_Offset = (float)(g_tMPU6050.Accel_Y + MPU6050_H.Accel_Y_Offset) / 2;
+			MPU6050_H.Accel_Z_Offset = (float)(g_tMPU6050.Accel_Z + MPU6050_H.Accel_Z_Offset - 65536 / 4) / 2;
+			
+			MPU6050_H.GYRO_X_Offset = (float)(g_tMPU6050.GYRO_X + MPU6050_H.GYRO_X_Offset) / 2;
+			MPU6050_H.GYRO_Y_Offset = (float)(g_tMPU6050.GYRO_Y + MPU6050_H.GYRO_Y_Offset) / 2;
+			MPU6050_H.GYRO_Z_Offset = (float)(g_tMPU6050.GYRO_Z + MPU6050_H.GYRO_Z_Offset) / 2;
+			
+			CaliTime--;
 		}
 		
 		if((HMC5883LFlag & NORMAL) && (MPU6050Flag & NORMAL))
@@ -70,12 +89,24 @@ void AppSampleTask(void *p_arg)
 		}
 		
 		
+	//if((WIFI_Period++) % 10000 == 0)
+	//	ESP8266_send_data();	
+
+
+
+	MPU6050FlagOld = MPU6050Flag;
+	
+	
+	
 	OSTimeDlyHMSM((CPU_INT16U) 0u,
                 (CPU_INT16U) 0u,
                 (CPU_INT16U) 0u,
-                (CPU_INT32U) 3u,
+                (CPU_INT32U) 1u,
                 (OS_OPT    ) OS_OPT_TIME_HMSM_STRICT,
                 (OS_ERR   *)&err);		
+	
+	
+	
 	}
 }
 
