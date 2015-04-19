@@ -17,5 +17,5 @@ struct ip_infomation
 };
 
 
-uint8_t ESP8266_send_data(void);
+void ESP8266_send_data(char* str);
 #endif

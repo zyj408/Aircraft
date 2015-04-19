@@ -3,8 +3,11 @@
 #include "IMU.h"
 
 uint8_t WIFI_Period;
-uint16_t CaliTime = 0;
+uint32_t CaliTime = 0;
 
+char send_data_buf[200];
+extern float Angle_X_Final; //X×îÖÕÇãÐ±½Ç¶È
+extern float Angle_Y_Final; //Y×îÖÕÇãÐ±½Ç¶È
 void AppSampleTask(void *p_arg)
 {
 	OS_ERR err;
@@ -81,6 +84,9 @@ void AppSampleTask(void *p_arg)
 			MPU6050_H.GYRO_Z_Offset = (float)(g_tMPU6050.GYRO_Z + MPU6050_H.GYRO_Z_Offset) / 2;
 			
 			CaliTime--;
+			
+			if(CaliTime > 200)
+				CaliTime = 200;
 		}
 		
 		if((HMC5883LFlag & NORMAL) && (MPU6050Flag & NORMAL))
@@ -89,8 +95,15 @@ void AppSampleTask(void *p_arg)
 		}
 		
 		
-	//if((WIFI_Period++) % 10000 == 0)
-	//	ESP8266_send_data();	
+	if((WIFI_Period++) % 1000000 == 0)
+	{
+		Mem_Clr(send_data_buf, sizeof(send_data_buf));
+ 		sprintf(send_data_buf, "sy:s1:d:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%f",angleAx_temp, angleAy_temp, angleAz_temp,MPU6050_H.Accel_X,MPU6050_H.Accel_Y,MPU6050_H.Accel_Z, \
+		MPU6050_H.GYRO_X,MPU6050_H.GYRO_Y,MPU6050_H.GYRO_Z,HMC5883L_H.X,HMC5883L_H.Y,HMC5883L_H.Z,MPU6050_H.Accel_X_Offset,MPU6050_H.Accel_Y_Offset,MPU6050_H.Accel_Z_Offset, \
+		MPU6050_H.GYRO_X_Offset,MPU6050_H.GYRO_Y_Offset,MPU6050_H.GYRO_Z_Offset);
+		ESP8266_send_data(send_data_buf);
+	}
+		
 
 
 
@@ -101,10 +114,10 @@ void AppSampleTask(void *p_arg)
 	OSTimeDlyHMSM((CPU_INT16U) 0u,
                 (CPU_INT16U) 0u,
                 (CPU_INT16U) 0u,
-                (CPU_INT32U) 1u,
+                (CPU_INT32U) 2u,
                 (OS_OPT    ) OS_OPT_TIME_HMSM_STRICT,
                 (OS_ERR   *)&err);		
-	
+	//bsp_LedToggle(1);
 	
 	
 	}

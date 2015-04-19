@@ -1,6 +1,9 @@
 #ifndef __IMU_H
 #define __IMU_H
 
+
+extern float angleAx_temp, angleAy_temp, angleAz_temp;
+
 void IMU_init(void);
 void IMU_getYawPitchRoll(float* angles);
 void IMU_getQ(float * q);

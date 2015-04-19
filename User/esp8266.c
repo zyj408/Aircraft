@@ -293,32 +293,57 @@ void AppCommTask(void *p_arg)
 	}
 }
 
-uint8_t ESP8266_send_data(void)
+void ESP8266_send_data(char* str)
 {
-	
 	if(WifiStatus == CONNECTING)
 	{
 		BSP_OS_SemWait(&wifi_send_sem, 20000);
 		
 		Mem_Clr(ESP8266_tx_data, sizeof(ESP8266_tx_data));
-		sprintf(ESP8266_tx_data, "MPU6050----> Acc:%f,%f,%f;;Gyro:%f,%f,%f", \
-							MPU6050_H.Accel_X, MPU6050_H.Accel_Y, MPU6050_H.Accel_Z, MPU6050_H.GYRO_X, MPU6050_H.GYRO_Y, MPU6050_H.GYRO_Z);
-		
-		
-		Mem_Clr(ESP8266_rx_data, sizeof(ESP8266_rx_data));
-		sprintf(ESP8266_rx_data, "AT+CIPSEND=0,%d", strlen(ESP8266_tx_data));
-		ESP8266_SendAT(ESP8266_rx_data); //ÏòID ·¢ËÍ×Ö·û´®
+		sprintf(ESP8266_tx_data, "AT+CIPSEND=0,%d", strlen(str));
+		ESP8266_SendAT(ESP8266_tx_data);
 		
 		Mem_Clr(ESP8266_rx_data, sizeof(ESP8266_rx_data));
 		ESP8266_ReadResponse(ESP8266_rx_data, sizeof(ESP8266_rx_data), 2000);
+		
 		if(strchr(ESP8266_rx_data, '>') != NULL)
 		{
-			ESP8266_SendAT(ESP8266_tx_data);
-			
+			ESP8266_SendAT(str);
 		}
+		
 		Mem_Clr(ESP8266_rx_data, sizeof(ESP8266_rx_data));
 		BSP_OS_SemPost(&wifi_send_sem);
+		
 	}
-	
-		return 0;
+		
 }
+
+// uint8_t ESP8266_send_data(void)
+// {
+// 	
+// 	if(WifiStatus == CONNECTING)
+// 	{
+// 		BSP_OS_SemWait(&wifi_send_sem, 20000);
+// 		
+// 		Mem_Clr(ESP8266_tx_data, sizeof(ESP8266_tx_data));
+// 		sprintf(ESP8266_tx_data, "MPU6050----> Acc:%f,%f,%f;;Gyro:%f,%f,%f", \
+// 							MPU6050_H.Accel_X, MPU6050_H.Accel_Y, MPU6050_H.Accel_Z, MPU6050_H.GYRO_X, MPU6050_H.GYRO_Y, MPU6050_H.GYRO_Z);
+// 		
+// 		
+// 		Mem_Clr(ESP8266_rx_data, sizeof(ESP8266_rx_data));
+// 		sprintf(ESP8266_rx_data, "AT+CIPSEND=0,%d", strlen(ESP8266_tx_data));
+// 		ESP8266_SendAT(ESP8266_rx_data); //ÏòID ·¢ËÍ×Ö·û´®
+// 		
+// 		Mem_Clr(ESP8266_rx_data, sizeof(ESP8266_rx_data));
+// 		ESP8266_ReadResponse(ESP8266_rx_data, sizeof(ESP8266_rx_data), 2000);
+// 		if(strchr(ESP8266_rx_data, '>') != NULL)
+// 		{
+// 			ESP8266_SendAT(ESP8266_tx_data);
+// 			
+// 		}
+// 		Mem_Clr(ESP8266_rx_data, sizeof(ESP8266_rx_data));
+// 		BSP_OS_SemPost(&wifi_send_sem);
+// 	}
+// 	
+// 		return 0;
+// }

@@ -1,6 +1,6 @@
 #include <includes.h>
 
-float angleAx_temp, angleAy_temp, angleAz;
+float angleAx_temp, angleAy_temp, angleAz_temp;
 float GyroAx_temp, GyroAy_temp;
 float Angle_X_Final; //X最终倾斜角度
 float Angle_Y_Final; //Y最终倾斜角度
@@ -16,7 +16,7 @@ void Angle_Calcu(void)
 {
 	angleAx_temp = atan2(MPU6050_H.Accel_X, MPU6050_H.Accel_Z)*180/PI;  //加速度计算角度
 	angleAy_temp = atan2(MPU6050_H.Accel_Y, MPU6050_H.Accel_Z)*180/PI;
-	angleAz = atan2(HMC5883L_H.X, HMC5883L_H.Y);
+	angleAz_temp = atan2(HMC5883L_H.X, HMC5883L_H.Y);
 	
   if(MPU6050_H.Accel_X<32764) angleAy_temp = +angleAy_temp;
 	if(MPU6050_H.Accel_X>32764) angleAy_temp = -angleAy_temp;
@@ -34,7 +34,7 @@ void Angle_Calcu(void)
 float Q_angle = 0.001;  
 float Q_gyro  = 0.003;
 float R_angle = 0.5;
-float dt      = 0.001;//dt为kalman滤波器采样时间;
+float dt      = 0.002;//dt为kalman滤波器采样时间;
 char  C_0     = 1;
 float Q_bias, Angle_err;
 float PCt_0, PCt_1, E;
