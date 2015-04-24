@@ -4,6 +4,19 @@
 
 uint8_t WIFI_Period;
 uint32_t CaliTime = 0;
+/* PWM输出任务 */
+uint16_t SetPwmValue[4] = {50, 50, 50, 50};
+uint16_t SetGeneralReinforce = 100;
+uint8_t  SetPwmDirection[4] = {0,0,0,0};
+
+uint16_t CurrentPwmValue[4] = {0,0,0,0};
+uint16_t CurrentGeneralReinforce = 0;
+uint8_t  CurrentPwmDirection[4] = {0,0,0,0};
+
+
+uint8_t index;
+uint32_t PwmTemp;
+
 
 char send_data_buf[200];
 extern float Angle_X_Final; //X最终倾斜角度
@@ -105,7 +118,47 @@ void AppSampleTask(void *p_arg)
 	}
 		
 
-
+    if(CurrentGeneralReinforce != SetGeneralReinforce)
+		{
+			if(SetGeneralReinforce > 100)    //防止增益超出范围    
+				SetGeneralReinforce = 100;             
+		
+			for(index=0; index<4; index++)
+			{
+				PwmTemp = (uint32_t)(CurrentPwmValue[index] * SetGeneralReinforce / 100);    //计算出当前的PWM实际值
+				if(PwmTemp > 100)    //防止PWM占空比超出范围
+					PwmTemp = 100;
+				
+				bsp_SetPWMDutyCycle(PwmTemp, index+1);				
+			}
+			
+			CurrentGeneralReinforce = SetGeneralReinforce;  //增益赋值
+		}
+	
+		for(index=0; index<4; index++)
+		{
+			if(CurrentPwmValue[index] != SetPwmValue[index])
+			{
+				if(SetPwmValue[index] > 100)    //防止增益超出范围    
+					SetPwmValue[index] = 100;   				
+				
+				PwmTemp = (uint32_t)(SetPwmValue[index] * CurrentGeneralReinforce / 100);    //计算出当前的PWM实际值
+				if(PwmTemp > 100)    //防止PWM占空比超出范围
+					PwmTemp = 100;
+				
+				bsp_SetPWMDutyCycle(PwmTemp, index+1);
+				CurrentPwmValue[index] = SetPwmValue[index];
+			}
+			
+			if(SetPwmDirection[index] != CurrentPwmDirection[index])
+			{
+				
+	      
+				SetPwmDirection[index] = CurrentPwmDirection[index];
+			}
+		}
+	
+	
 
 	MPU6050FlagOld = MPU6050Flag;
 	
@@ -123,67 +176,4 @@ void AppSampleTask(void *p_arg)
 	}
 }
 
-/* PWM输出任务 */
-uint16_t SetPwmValue[4] = {0,0,0,0};
-uint16_t CurrentPwmValue[4];
-uint16_t SetGeneralReinforce = 0;
-uint16_t CurrentGeneralReinforce;
-uint8_t  SetPwmDirection[4] = {0,0,0,0};
-uint8_t  CurrentPwmDirection[4];
-void AppOutPutTask(void *p_arg)
-{
-	uint8_t index;
-	uint32_t PwmTemp;
-	(void)p_arg;
-	
-	Mem_Copy(CurrentPwmValue, SetPwmValue, sizeof(SetPwmValue));
-	Mem_Copy(CurrentPwmDirection, SetPwmDirection, sizeof(SetPwmDirection));
-	CurrentGeneralReinforce = SetGeneralReinforce;
-	
-	while(1)
-	{
-		if(CurrentGeneralReinforce != SetGeneralReinforce)
-		{
-			if(SetGeneralReinforce > 100)    //防止增益超出范围    
-				SetGeneralReinforce = 100;             
-		
-			for(index=0; index<4; index++)
-			{
-				PwmTemp = (uint32_t)(CurrentPwmValue[index] * SetGeneralReinforce / 100);    //计算出当前的PWM实际值
-				if(PwmTemp > 100)    //防止PWM占空比超出范围
-					PwmTemp = 100;
-				
-				bsp_SetPWMDutyCycle(index+1, PwmTemp);				
-			}
-			
-			CurrentGeneralReinforce = SetGeneralReinforce;  //增益赋值
-		}
-		
-		
-		for(index=0; index<4; index++)
-		{
-			if(CurrentPwmValue[index] != SetPwmValue[index])
-			{
-				if(SetPwmValue[index] > 100)    //防止增益超出范围    
-					SetPwmValue[index] = 100;   				
-				
-				PwmTemp = (uint32_t)(SetPwmValue[index] * CurrentGeneralReinforce / 100);    //计算出当前的PWM实际值
-				if(PwmTemp > 100)    //防止PWM占空比超出范围
-					PwmTemp = 100;
-				
-				bsp_SetPWMDutyCycle(index+1, PwmTemp);
-				CurrentPwmValue[index] = SetPwmValue[index];
-			}
-			
-			if(SetPwmDirection[index] != CurrentPwmDirection[index])
-			{
-				
-				
-				SetPwmDirection[index] = CurrentPwmDirection[index];
-			}
-		}
-		
-		BSP_OS_TimeDlyMs(5);
-	}
-}
 

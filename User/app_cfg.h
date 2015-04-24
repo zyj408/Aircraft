@@ -45,7 +45,6 @@
 
 #define  APP_CFG_TASK_START_STK_SIZE                      1024u
 #define  APP_SAMPLE_TASK_STK_SIZE                         256u
-#define  APP_OUTPUT_TASK_STK_SIZE                         256u
 #define  APP_COMM_TASK_STK_SIZE                           256u
 
 /*

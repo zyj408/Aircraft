@@ -18,8 +18,6 @@ static  CPU_STK  AppTaskStartStk[APP_CFG_TASK_START_STK_SIZE];
 static  OS_TCB   AppSampleTaskTCB;
 static  CPU_STK  AppSampleTaskStk[APP_SAMPLE_TASK_STK_SIZE];
 
-static  OS_TCB   AppOutputTaskTCB;
-static  CPU_STK  AppOutputTaskStk[APP_OUTPUT_TASK_STK_SIZE];
 /*
 *********************************************************************************************************
 *                                         FUNCTION PROTOTYPES
@@ -30,7 +28,6 @@ static void AppTaskStart(void *p_arg);
 
 
 extern void AppSampleTask(void *p_arg);
-extern void AppOutPutTask(void *p_arg);
 extern void AppCommTask(void *p_arg);
 /*
 *********************************************************************************************************
@@ -133,21 +130,6 @@ static  void  AppTaskCreate (void)
                  (CPU_STK      *)&AppSampleTaskStk[0],
                  (CPU_STK_SIZE  )APP_SAMPLE_TASK_STK_SIZE / 10,
                  (CPU_STK_SIZE  )APP_SAMPLE_TASK_STK_SIZE,
-                 (OS_MSG_QTY    )1,
-                 (OS_TICK       )0,
-                 (void         *)0,
-                 (OS_OPT        )(OS_OPT_TASK_STK_CHK | OS_OPT_TASK_STK_CLR),
-                 (OS_ERR       *)&err);
-								 
-	/***********************************/
-	OSTaskCreate((OS_TCB       *)&AppOutputTaskTCB,             
-                 (CPU_CHAR     *)"App Task Output",
-                 (OS_TASK_PTR   )AppOutPutTask, 
-                 (void         *)0,
-                 (OS_PRIO       )APP_CFG_TASK_OUTPUT_PRIO,
-                 (CPU_STK      *)&AppOutputTaskStk[0],
-                 (CPU_STK_SIZE  )APP_OUTPUT_TASK_STK_SIZE / 10,
-                 (CPU_STK_SIZE  )APP_OUTPUT_TASK_STK_SIZE,
                  (OS_MSG_QTY    )1,
                  (OS_TICK       )0,
                  (void         *)0,
