@@ -102,6 +102,7 @@ static  void  AppTaskStart (void *p_arg)
 		AppSemCreate();         	
   while (1)
 	{ 
+		//bsp_LedToggle(1);
 		if(WifiStatus == CONNECTING)
 			bsp_LedToggle(1);
 		BSP_OS_TimeDlyMs(500);

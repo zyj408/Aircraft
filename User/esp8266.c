@@ -281,6 +281,9 @@ void AppCommTask(void *p_arg)
 							MPU6050Flag |= CALI_MODE;  //MPU6050У׼ģʽ
 						break;
 						
+						case 'p':
+							break;
+						
 					}
 				}
 			
