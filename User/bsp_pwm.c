@@ -60,14 +60,20 @@ void bsp_PWMInit(void)
 	
 	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;
 	TIM_OCInitStructure.TIM_Pulse = 0;
+	
 	
 	TIM_OC1Init(TIM5, &TIM_OCInitStructure);
 	TIM_OC1PreloadConfig(TIM5, TIM_OCPreload_Enable);
 	
 	TIM_OC2Init(TIM5, &TIM_OCInitStructure);
 	TIM_OC2PreloadConfig(TIM5, TIM_OCPreload_Enable);
+	
+	
+	
+	
+	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 	
 	TIM_OC3Init(TIM5, &TIM_OCInitStructure);
 	TIM_OC3PreloadConfig(TIM5, TIM_OCPreload_Enable);
@@ -94,14 +100,15 @@ void bsp_PWMInit(void)
 }
 
 
-uint32_t PWM_CCR;
+
 void bsp_SetPWMDutyCycle(uint16_t PWMValue, unsigned char PWMChannel)
 {	
-
+	uint32_t PWM_CCR;
+	
 	if (PWMValue == 0)
 		PWM_CCR = 0;
 	else
-		PWM_CCR =(usPeriod + 1) * (uint32_t)PWMValue / 100 - 1 - usPWMOffset;  /* 计算PWM反向寄存器的值 */
+		PWM_CCR =(uint32_t)((usPeriod + 1) * (uint32_t)PWMValue / 100 - 1 - usPWMOffset);  /* 计算PWM反向寄存器的值 */
 
 	switch(PWMChannel)
 	{

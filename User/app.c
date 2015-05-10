@@ -8,7 +8,7 @@ uint16_t WIFI_Period;
 uint32_t CaliTime = 0;
 /* PWM输出任务 */
 uint16_t SetPwmValue[4] = {1, 1, 1, 1};
-uint16_t SetGeneralReinforce = 0;
+//uint16_t SetGeneralReinforce = 0;
 uint8_t  SetPwmDirection[4] = {0,0,0,0};
 
 uint16_t CurrentPwmValue[4] = {0,0,0,0};
@@ -17,7 +17,6 @@ uint8_t  CurrentPwmDirection[4] = {0,0,0,0};
 
 
 uint8_t index;
-uint32_t PwmTemp;
 uint8_t SensorCheckCnt = 0;
 
 char send_data_buf[200];
@@ -113,30 +112,31 @@ void AppSampleTask(void *p_arg)
 	{
 		if((WIFI_Period++) % 5000 == 0)
 		{
+			
 			Mem_Clr(send_data_buf, sizeof(send_data_buf));
 			sprintf(send_data_buf, "sy:s1:d:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%f",angleAx_temp, angleAy_temp, angleAz_temp,MPU6050_H.Accel_X,MPU6050_H.Accel_Y,MPU6050_H.Accel_Z, \
 			MPU6050_H.GYRO_X,MPU6050_H.GYRO_Y,MPU6050_H.GYRO_Z,HMC5883L_H.X,HMC5883L_H.Y,HMC5883L_H.Z,MPU6050_H.Accel_X_Offset,MPU6050_H.Accel_Y_Offset,MPU6050_H.Accel_Z_Offset, \
 			MPU6050_H.GYRO_X_Offset,MPU6050_H.GYRO_Y_Offset,MPU6050_H.GYRO_Z_Offset);
 			ESP8266_send_data(send_data_buf);
-				bsp_LedToggle(2);
+			bsp_LedToggle(2);
 		}
 			
-			if(CurrentGeneralReinforce != SetGeneralReinforce)
-			{
-				if(SetGeneralReinforce > 100)    //防止增益超出范围    
-					SetGeneralReinforce = 100;             
-			
-				for(index=0; index<4; index++)
-				{
-					PwmTemp = (uint32_t)(CurrentPwmValue[index] * SetGeneralReinforce / 100);    //计算出当前的PWM实际值
-					if(PwmTemp > 100)    //防止PWM占空比超出范围
-						PwmTemp = 100;
-					
-					bsp_SetPWMDutyCycle(PwmTemp, index+1);				
-				}
-				
-				CurrentGeneralReinforce = SetGeneralReinforce;  //增益赋值
-			}
+// 			if(CurrentGeneralReinforce != SetGeneralReinforce)
+// 			{
+// 				if(SetGeneralReinforce > 100)    //防止增益超出范围    
+// 					SetGeneralReinforce = 100;             
+// 			
+// 				for(index=0; index<4; index++)
+// 				{
+// 					PwmTemp = (uint32_t)(CurrentPwmValue[index] * SetGeneralReinforce / 100);    //计算出当前的PWM实际值
+// 					if(PwmTemp > 100)    //防止PWM占空比超出范围
+// 						PwmTemp = 100;
+// 					
+// 					bsp_SetPWMDutyCycle(PwmTemp, index+1);				
+// 				}
+// 				
+// 				CurrentGeneralReinforce = SetGeneralReinforce;  //增益赋值
+// 			}
 		
 			for(index=0; index<4; index++)
 			{
@@ -145,20 +145,12 @@ void AppSampleTask(void *p_arg)
 					if(SetPwmValue[index] > 100)    //防止增益超出范围    
 						SetPwmValue[index] = 100;   				
 					
-					PwmTemp = (uint32_t)(SetPwmValue[index] * CurrentGeneralReinforce / 100);    //计算出当前的PWM实际值
-					if(PwmTemp > 100)    //防止PWM占空比超出范围
-						PwmTemp = 100;
-					
-					bsp_SetPWMDutyCycle(PwmTemp, index+1);
+					bsp_SetPWMDutyCycle(SetPwmValue[index], index+1);
 					CurrentPwmValue[index] = SetPwmValue[index];
 				}
 				
-				if(SetPwmDirection[index] != CurrentPwmDirection[index])
-				{
-					
-					
-					SetPwmDirection[index] = CurrentPwmDirection[index];
-				}
+// 				if(SetPwmDirection[index] != CurrentPwmDirection[index])
+// 					SetPwmDirection[index] = CurrentPwmDirection[index];
 			}
 	}
 

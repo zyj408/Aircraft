@@ -11,14 +11,13 @@ enum WIFI_STATUS WifiStatus;  //WIFI连接状态
 char ESP8266_rx_data[256] = {0};
 char ESP8266_tx_data[256] = {0};
 char ESP8266_current_mode = 0;
-char *ptr_temp;
+char *ptr_temp = NULL;
 
 uint8_t ESP8266_connect_flag = 0;
 struct ip_infomation ESP8266_connect[4];
 extern BSP_OS_SEM wifi_send_sem;
 
 OS_ERR err;
-extern uint16_t LedDalay;
 uint8_t ESP8266_WaitResponse(char *_pAckStr, uint16_t _usTimeOut)
 {
 	uint8_t ucData;
@@ -131,8 +130,6 @@ uint16_t ESP8266_ReadResponse(char *_pBuf, uint16_t _usBufSize, uint16_t _usTime
 
 		if (comGetChar(COM_ESP8266, &ucData))
 		{
-		//	ESP8266_PrintRxData(ucData);		/* 将接收到数据打印到调试串口1 */
-
 			switch (status)
 			{
 				case 0:			/* 首字符 */
@@ -204,11 +201,11 @@ void ESP8266_Reset(void)
 
 
 
-
-char data_temp[10];
+uint32_t wifi_rx_cnt = 0;
+char data_temp[10] = {0};
 extern uint16_t SetPwmValue[4];
-extern uint16_t SetGeneralReinforce;
 extern uint8_t  SetPwmDirection[4];
+
 void AppCommTask(void *p_arg)
 {
 	uint8_t i;
@@ -303,12 +300,14 @@ void AppCommTask(void *p_arg)
 				}
 			break;
 			case CONNECTING:
-				BSP_OS_SemWait(&wifi_send_sem, 20000);
-			
+				BSP_OS_SemWait(&wifi_send_sem, 0);
+				Mem_Clr(ESP8266_rx_data, sizeof(ESP8266_rx_data));
 				ESP8266_ReadResponse(ESP8266_rx_data, sizeof(ESP8266_rx_data), 1000);
+				ptr_temp = NULL;
 				ptr_temp = strstr(ESP8266_rx_data, "sync"); //接收到同步字
 				if(ptr_temp != NULL)
 				{
+					wifi_rx_cnt++;
 					switch(*(ptr_temp+4))
 					{
 						case 'c':
@@ -322,10 +321,6 @@ void AppCommTask(void *p_arg)
 								data_temp[3] = '\0';
 								SetPwmValue[i] = (uint16_t)atoi(data_temp);
 							}
-							
-								strncpy(data_temp, (ptr_temp+5+ 3*i), 3);
-								data_temp[3] = '\0';
-								SetGeneralReinforce = (uint16_t)atoi(data_temp);
 						break;
 					}
 					comClearRxFifo(COM_ESP8266);
@@ -344,7 +339,7 @@ void ESP8266_send_data(char* str)
 {
 	if(WifiStatus == CONNECTING)
 	{
-		BSP_OS_SemWait(&wifi_send_sem, 20000);
+		BSP_OS_SemWait(&wifi_send_sem, 0);
 		
 		Mem_Clr(ESP8266_tx_data, sizeof(ESP8266_tx_data));
 		sprintf(ESP8266_tx_data, "AT+CIPSEND=0,%d", strlen(str));
@@ -364,33 +359,3 @@ void ESP8266_send_data(char* str)
 	}
 		
 }
-
-// uint8_t ESP8266_send_data(void)
-// {
-// 	
-// 	if(WifiStatus == CONNECTING)
-// 	{
-// 		BSP_OS_SemWait(&wifi_send_sem, 20000);
-// 		
-// 		Mem_Clr(ESP8266_tx_data, sizeof(ESP8266_tx_data));
-// 		sprintf(ESP8266_tx_data, "MPU6050----> Acc:%f,%f,%f;;Gyro:%f,%f,%f", \
-// 							MPU6050_H.Accel_X, MPU6050_H.Accel_Y, MPU6050_H.Accel_Z, MPU6050_H.GYRO_X, MPU6050_H.GYRO_Y, MPU6050_H.GYRO_Z);
-// 		
-// 		
-// 		Mem_Clr(ESP8266_rx_data, sizeof(ESP8266_rx_data));
-// 		sprintf(ESP8266_rx_data, "AT+CIPSEND=0,%d", strlen(ESP8266_tx_data));
-// 		ESP8266_SendAT(ESP8266_rx_data); //向ID 发送字符串
-// 		
-// 		Mem_Clr(ESP8266_rx_data, sizeof(ESP8266_rx_data));
-// 		ESP8266_ReadResponse(ESP8266_rx_data, sizeof(ESP8266_rx_data), 2000);
-// 		if(strchr(ESP8266_rx_data, '>') != NULL)
-// 		{
-// 			ESP8266_SendAT(ESP8266_tx_data);
-// 			
-// 		}
-// 		Mem_Clr(ESP8266_rx_data, sizeof(ESP8266_rx_data));
-// 		BSP_OS_SemPost(&wifi_send_sem);
-// 	}
-// 	
-// 		return 0;
-// }

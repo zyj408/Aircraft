@@ -21,6 +21,12 @@ void NMI_Handler(void)
 {
 }
 
+
+__asm void wait()
+{
+      BX lr
+}
+
 /*
 *********************************************************************************************************
 *	函 数 名: HardFault_Handler
@@ -32,7 +38,8 @@ void NMI_Handler(void)
 */
 void HardFault_Handler(void)
 {
-#if 1
+	wait();
+#if 0
   const char *pError = ERR_INFO;
   uint8_t i;
 
@@ -42,6 +49,13 @@ void HardFault_Handler(void)
      /* 等待发送结束 */
      while ((USART1->SR & USART_FLAG_TC) == (uint16_t)RESET);
   }
+	
+	bsp_SetPWMDutyCycle(0,1);
+	bsp_SetPWMDutyCycle(0,2);
+	bsp_SetPWMDutyCycle(0,3);
+	bsp_SetPWMDutyCycle(0,4);
+	
+	//__asm out dx, al
 #endif
 
   /* 当硬件失效异常发生时进入死循环 */
