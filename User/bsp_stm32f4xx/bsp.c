@@ -66,6 +66,7 @@ void bsp_Init(void)
 	bsp_InitLed();
 	bsp_PWMInit();
 	bsp_InitTimer();	/* 初始化系统滴答定时器 */
+	ESP8266_Reset();
   //bsp_ESP8266SetupAP();
 	
 	

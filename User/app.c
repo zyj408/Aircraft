@@ -4,10 +4,10 @@
 
 
 extern enum WIFI_STATUS WifiStatus;
-uint8_t WIFI_Period;
+uint16_t WIFI_Period;
 uint32_t CaliTime = 0;
 /* PWM输出任务 */
-uint16_t SetPwmValue[4] = {50, 50, 50, 50};
+uint16_t SetPwmValue[4] = {1, 1, 1, 1};
 uint16_t SetGeneralReinforce = 0;
 uint8_t  SetPwmDirection[4] = {0,0,0,0};
 
@@ -18,45 +18,44 @@ uint8_t  CurrentPwmDirection[4] = {0,0,0,0};
 
 uint8_t index;
 uint32_t PwmTemp;
-
+uint8_t SensorCheckCnt = 0;
 
 char send_data_buf[200];
 extern float Angle_X_Final; //X最终倾斜角度
 extern float Angle_Y_Final; //Y最终倾斜角度
 void AppSampleTask(void *p_arg)
 {
-	OS_ERR err;
-	
 	(void)p_arg;
 /* 监测MPU6050信息 */
-	if(i2c_CheckDevice(MPU6050_SLAVE_ADDRESS) == 0)
+	while(SensorCheckCnt < 5)
 	{
-		//printf("MPU-6050 Ok (0x%02X)\r\n", MPU6050_SLAVE_ADDRESS);
-		MPU6050Flag |= NORMAL;
+		if(i2c_CheckDevice(MPU6050_SLAVE_ADDRESS) == 0)
+		{
+					bsp_InitMPU6050();  //初始化MPU6050
+			MPU6050Flag |= NORMAL;
+		}
+		else
+		{
+			MPU6050Flag &= (~NORMAL);
+		}
+		
+	/* 监测HMC5883L信息 */	
+		if (i2c_CheckDevice(HMC5883L_SLAVE_ADDRESS) == 0)
+		{
+			bsp_InitHMC5883L();	/* 初始化HMC5883L */	
+			HMC5883LFlag |= NORMAL;
+		}
+		else
+		{
+			HMC5883LFlag &= (~NORMAL);
+		}
+		SensorCheckCnt++;
 	}
-	else
-	{
-		//printf("MPU-6050 Err (0x%02X)\r\n", MPU6050_SLAVE_ADDRESS);
-		MPU6050Flag &= (~NORMAL);
-	}
-/* 初始化MPU6050 */	
-	bsp_InitMPU6050();  //初始化MPU6050
 	
-	
-/* 监测HMC5883L信息 */	
-	if (i2c_CheckDevice(HMC5883L_SLAVE_ADDRESS) == 0)
+	if(SensorCheckCnt == 5)
 	{
-		//printf("HMC5883L Ok (0x%02X)\r\n", HMC5883L_SLAVE_ADDRESS);
-		HMC5883LFlag |= NORMAL;
+		
 	}
-	else
-	{
-		//printf("HMC5883L Err (0x%02X)\r\n",HMC5883L_SLAVE_ADDRESS);
-		HMC5883LFlag &= (~NORMAL);
-	}
-/* 初始化HMC5883L */		
-	bsp_InitHMC5883L();
-
 	
 	while(1)
 	{
@@ -110,14 +109,16 @@ void AppSampleTask(void *p_arg)
 		}
 		
 	if(WifiStatus == CONNECTING)	
+		
 	{
-		if((WIFI_Period++) % 1000000 == 0)
+		if((WIFI_Period++) % 5000 == 0)
 		{
 			Mem_Clr(send_data_buf, sizeof(send_data_buf));
 			sprintf(send_data_buf, "sy:s1:d:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%fd:%f",angleAx_temp, angleAy_temp, angleAz_temp,MPU6050_H.Accel_X,MPU6050_H.Accel_Y,MPU6050_H.Accel_Z, \
 			MPU6050_H.GYRO_X,MPU6050_H.GYRO_Y,MPU6050_H.GYRO_Z,HMC5883L_H.X,HMC5883L_H.Y,HMC5883L_H.Z,MPU6050_H.Accel_X_Offset,MPU6050_H.Accel_Y_Offset,MPU6050_H.Accel_Z_Offset, \
 			MPU6050_H.GYRO_X_Offset,MPU6050_H.GYRO_Y_Offset,MPU6050_H.GYRO_Z_Offset);
 			ESP8266_send_data(send_data_buf);
+				bsp_LedToggle(2);
 		}
 			
 			if(CurrentGeneralReinforce != SetGeneralReinforce)
@@ -163,15 +164,8 @@ void AppSampleTask(void *p_arg)
 
 	MPU6050FlagOld = MPU6050Flag;
 	
-	
-	
-	OSTimeDlyHMSM((CPU_INT16U) 0u,
-                (CPU_INT16U) 0u,
-                (CPU_INT16U) 0u,
-                (CPU_INT32U) 2u,
-                (OS_OPT    ) OS_OPT_TIME_HMSM_STRICT,
-                (OS_ERR   *)&err);		
-	//bsp_LedToggle(1);
+	BSP_OS_TimeDlyMs(2);	
+
 	
 	
 	}

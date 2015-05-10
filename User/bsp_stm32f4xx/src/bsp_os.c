@@ -263,8 +263,8 @@ void   BSP_OS_TimeDlyMs (CPU_INT32U  dly_ms)
     }
 
     if (dly_ms >= 1000u) {
-        ms  = dly_ms / 1000u;
-        sec = dly_ms % 1000u;
+        sec  = dly_ms / 1000u;
+        ms = dly_ms % 1000u;
     } else {
         ms  = dly_ms;
         sec = 0u;

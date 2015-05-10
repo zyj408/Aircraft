@@ -176,10 +176,44 @@ void ESP8266_SendAT(char *_Cmd)
 	comSendBuf(COM1, "\r\n", 2);
 }
 
+void ESP8266_Reset(void)
+{
+	GPIO_InitTypeDef  GPIO_InitStructure;
+	Mem_Set(&GPIO_InitStructure, 0x00, sizeof(GPIO_InitStructure));
+	
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+
+	/* 配置GPIO */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	
+	GPIO_ResetBits(GPIOA, GPIO_Pin_11);
+	BSP_OS_TimeDlyMs(100);
+	GPIO_SetBits(GPIOA, GPIO_Pin_11);
+	BSP_OS_TimeDlyMs(100);
+
+	
+	
+	
+	comClearRxFifo(COM_ESP8266);
+}
+
+
+
+
+char data_temp[10];
+extern uint16_t SetPwmValue[4];
+extern uint16_t SetGeneralReinforce;
+extern uint8_t  SetPwmDirection[4];
 void AppCommTask(void *p_arg)
 {
+	uint8_t i;
 	WifiStatus = IDLE;
-	
+
 	(void)p_arg;
 	
 	while(1)
@@ -281,10 +315,20 @@ void AppCommTask(void *p_arg)
 							MPU6050Flag |= CALI_MODE;  //MPU6050校准模式
 						break;
 						
-						case 'p':
-							break;
-						
+						case 'm':
+							for(i=0; i<4; i++)
+							{
+								strncpy(data_temp, (ptr_temp+5+ 3*i), 3);
+								data_temp[3] = '\0';
+								SetPwmValue[i] = (uint16_t)atoi(data_temp);
+							}
+							
+								strncpy(data_temp, (ptr_temp+5+ 3*i), 3);
+								data_temp[3] = '\0';
+								SetGeneralReinforce = (uint16_t)atoi(data_temp);
+						break;
 					}
+					comClearRxFifo(COM_ESP8266);
 				}
 			
 				BSP_OS_SemPost(&wifi_send_sem);

@@ -2,7 +2,7 @@
 
 /*********** PWM模块配置参数 *******************/
 uint32_t usPrescaler = 83;   /* PWM时钟预分频系数 */
-uint32_t usPeriod = 999;     /* PWM计时周期 */
+uint32_t usPeriod = 99;      /* PWM计时周期 */
 uint32_t usPWMOffset = 0;    /* PWM占空比补偿 */
 /***********************************************/
 
@@ -62,6 +62,7 @@ void bsp_PWMInit(void)
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 	TIM_OCInitStructure.TIM_Pulse = 0;
+	
 	TIM_OC1Init(TIM5, &TIM_OCInitStructure);
 	TIM_OC1PreloadConfig(TIM5, TIM_OCPreload_Enable);
 	
@@ -86,6 +87,10 @@ void bsp_PWMInit(void)
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 	
+	GPIO_SetBits(GPIOB, GPIO_Pin_12);
+	GPIO_SetBits(GPIOB, GPIO_Pin_13);
+	GPIO_ResetBits(GPIOB, GPIO_Pin_14);
+	GPIO_ResetBits(GPIOB, GPIO_Pin_15);
 }
 
 
@@ -93,7 +98,10 @@ uint32_t PWM_CCR;
 void bsp_SetPWMDutyCycle(uint16_t PWMValue, unsigned char PWMChannel)
 {	
 
-	PWM_CCR =(usPeriod + 1) * (uint32_t)PWMValue / 100 - 1 - usPWMOffset;  /* 计算PWM反向寄存器的值 */
+	if (PWMValue == 0)
+		PWM_CCR = 0;
+	else
+		PWM_CCR =(usPeriod + 1) * (uint32_t)PWMValue / 100 - 1 - usPWMOffset;  /* 计算PWM反向寄存器的值 */
 
 	switch(PWMChannel)
 	{

@@ -85,10 +85,11 @@ static  void  AppTaskStart (void *p_arg)
 {
 	 OS_ERR err;
    (void)p_arg;
-
+	
+	BSP_Tick_Init(); 
  	bsp_Init();
 	CPU_Init();
-	BSP_Tick_Init();                      
+	                     
 
 #if OS_CFG_STAT_TASK_EN > 0u
      OSStatTaskCPUUsageInit(&err);   
