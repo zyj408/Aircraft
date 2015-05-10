@@ -515,6 +515,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\bsp_stm32f4xx\src\bsp_timer.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_i2c_gpio2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp_stm32f4xx\src\bsp_i2c_gpio2.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -869,6 +874,11 @@
               <FileName>Kalman.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\Kalman.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_camera.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app_camera.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1408,6 +1418,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\User\bsp_stm32f4xx\src\bsp_timer.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_i2c_gpio2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\bsp_stm32f4xx\src\bsp_i2c_gpio2.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1762,6 +1777,11 @@
               <FileName>Kalman.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\Kalman.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_camera.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\app_camera.c</FilePath>
             </File>
           </Files>
         </Group>

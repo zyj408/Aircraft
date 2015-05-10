@@ -33,7 +33,7 @@
 
 #define  APP_CFG_TASK_START_PRIO                              2u
 #define  APP_CFG_TASK_SAMPLE_PRIO                             3u
-#define  APP_CFG_TASK_OUTPUT_PRIO                             4u
+#define  APP_CFG_TASK_CAMERA_PRIO                             4u
 #define  APP_CFG_TASK_COMM_PRIO                               5u
 
 /*
@@ -43,9 +43,10 @@
 *********************************************************************************************************
 */
 
-#define  APP_CFG_TASK_START_STK_SIZE                      1024u
+#define  APP_CFG_TASK_START_STK_SIZE                      256u
 #define  APP_SAMPLE_TASK_STK_SIZE                         256u
 #define  APP_COMM_TASK_STK_SIZE                           256u
+#define  APP_CAMERA_TASK_STK_SIZE                         256u
 
 /*
 *********************************************************************************************************

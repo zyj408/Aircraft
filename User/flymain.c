@@ -3,6 +3,7 @@
 
 uint16_t Math_hz = 0;
 
+void Angle_Calcu(void);
 
 void FlyMain(void)
 {

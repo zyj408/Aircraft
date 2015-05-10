@@ -43,6 +43,24 @@ void bsp_InitVar(void)
 	H5853_C.Mag_Y_b = 0.0;
 	H5853_C.Mag_Z_b = 0.0;
 }
+
+void bsp_MCO1_Init(void)
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);	/* 打开GPIO时钟 */
+	
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;  
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
+    
+  RCC_MCO1Config(RCC_MCO1Source_PLLCLK, RCC_MCO2Div_4);
+}
+
+
 /*
 *********************************************************************************************************
 *	函 数 名: bsp_Init
@@ -53,12 +71,13 @@ void bsp_InitVar(void)
 */
 
 uint8_t sys_clk_source;
+void ESP8266_Reset(void);
 void bsp_Init(void)
 {
 
 	
 	sys_clk_source = RCC_GetSYSCLKSource();
-	
+	bsp_MCO1_Init();
 	NVIC_Configuration();  /* 中断优先级分组配置 */
 	bsp_InitVar();
 	bsp_InitI2C();
@@ -67,6 +86,7 @@ void bsp_Init(void)
 	bsp_PWMInit();
 	bsp_InitTimer();	/* 初始化系统滴答定时器 */
 	ESP8266_Reset();
+	bsp_InitI2C2();
   //bsp_ESP8266SetupAP();
 	
 	

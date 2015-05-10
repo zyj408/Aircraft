@@ -52,6 +52,7 @@
 #include "bsp_timer.h"
 #include "bsp_dwt.h"
 #include "bsp_i2c_gpio.h"
+#include "bsp_i2c_gpio2.h"
 #include "bsp_mpu6050.h"
 #include "bsp_hmc5883l.h"
 #include "bsp_uart_fifo.h"

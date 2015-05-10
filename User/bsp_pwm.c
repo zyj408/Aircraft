@@ -20,7 +20,7 @@ void bsp_PWMInit(void)
 	/* 使能时钟 */
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_GPIOB, ENABLE);
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM5, ENABLE);
-
+	
 	/* 连接到AF功能 */
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource0, GPIO_AF_TIM5);
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource1, GPIO_AF_TIM5);
@@ -28,7 +28,7 @@ void bsp_PWMInit(void)
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_TIM5);
 
 	/* 配置GPIO */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 ;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
@@ -70,9 +70,6 @@ void bsp_PWMInit(void)
 	TIM_OC2Init(TIM5, &TIM_OCInitStructure);
 	TIM_OC2PreloadConfig(TIM5, TIM_OCPreload_Enable);
 	
-	
-	
-	
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 	
 	TIM_OC3Init(TIM5, &TIM_OCInitStructure);
@@ -97,6 +94,7 @@ void bsp_PWMInit(void)
 	GPIO_SetBits(GPIOB, GPIO_Pin_13);
 	GPIO_ResetBits(GPIOB, GPIO_Pin_14);
 	GPIO_ResetBits(GPIOB, GPIO_Pin_15);
+
 }
 
 

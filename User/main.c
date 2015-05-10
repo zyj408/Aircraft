@@ -13,6 +13,9 @@ static  CPU_STK  AppCommTaskStk[APP_COMM_TASK_STK_SIZE];
 static  OS_TCB   AppTaskStartTCB;
 static  CPU_STK  AppTaskStartStk[APP_CFG_TASK_START_STK_SIZE];
 
+static  OS_TCB   AppCameraTaskTCB;
+static  CPU_STK  AppCameraTaskStk[APP_CAMERA_TASK_STK_SIZE];
+
 static  OS_TCB   AppSampleTaskTCB;
 static  CPU_STK  AppSampleTaskStk[APP_SAMPLE_TASK_STK_SIZE];
 
@@ -27,6 +30,7 @@ static void AppTaskStart(void *p_arg);
 
 extern void AppSampleTask(void *p_arg);
 extern void AppCommTask(void *p_arg);
+extern void AppCameraTask(void *p_arg);
 /*
 *********************************************************************************************************
 *	º¯ Êý Ãû: main
@@ -144,6 +148,21 @@ static  void  AppTaskCreate (void)
                  (CPU_STK      *)&AppCommTaskStk[0],
                  (CPU_STK_SIZE  )APP_COMM_TASK_STK_SIZE / 10,
                  (CPU_STK_SIZE  )APP_COMM_TASK_STK_SIZE,
+                 (OS_MSG_QTY    )1,
+                 (OS_TICK       )0,
+                 (void         *)0,
+                 (OS_OPT        )(OS_OPT_TASK_STK_CHK | OS_OPT_TASK_STK_CLR),
+                 (OS_ERR       *)&err);
+								 
+/***********************************/
+	OSTaskCreate((OS_TCB       *)&AppCameraTaskTCB,             
+                 (CPU_CHAR     *)"App Task Camera",
+                 (OS_TASK_PTR   )AppCameraTask, 
+                 (void         *)0,
+                 (OS_PRIO       )APP_CFG_TASK_CAMERA_PRIO,
+                 (CPU_STK      *)&AppCameraTaskStk[0],
+                 (CPU_STK_SIZE  )APP_CAMERA_TASK_STK_SIZE / 10,
+                 (CPU_STK_SIZE  )APP_CAMERA_TASK_STK_SIZE,
                  (OS_MSG_QTY    )1,
                  (OS_TICK       )0,
                  (void         *)0,
